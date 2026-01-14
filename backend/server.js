@@ -119,7 +119,8 @@ const connectDB = async () => {
     if (!process.env.MONGODB_URI) {
       console.error('❌ ERROR: MONGODB_URI environment variable is not set!');
       console.error('Please set MONGODB_URI in your Render environment variables.');
-      console.error('Expected format: mongodb+srv://username:password@cluster.mongodb.net/database');
+      console.error('Expected format: mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority');
+      console.error('Example: mongodb+srv://gigflowuser:****@gigflow.l8wxwcu.mongodb.net/gigflow?retryWrites=true&w=majority');
       process.exit(1);
     }
 
