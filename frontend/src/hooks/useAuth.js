@@ -9,26 +9,7 @@ export const useAuth = () => {
     (state) => state.auth
   );
 
-  useEffect(() => {
-    // Check for existing authentication on app start
-    if (!hasCheckedAuth.current) {
-      hasCheckedAuth.current = true;
-      console.log('Checking authentication...');
-
-      // Set a timeout to prevent infinite loading
-      const timeoutId = setTimeout(() => {
-        console.log('Authentication check timed out, assuming not authenticated');
-      }, 3000); // 3 second timeout
-
-      dispatch(getCurrentUser()).then(() => {
-        console.log('Authentication check completed');
-        clearTimeout(timeoutId);
-      }).catch((error) => {
-        console.log('Authentication check failed:', error);
-        clearTimeout(timeoutId);
-      });
-    }
-  }, [dispatch]);
+  // Removed automatic authentication check to prevent loading screens
 
   // Reset the check flag when user logs out
   useEffect(() => {
@@ -45,7 +26,7 @@ export const useAuth = () => {
   return {
     user,
     isAuthenticated,
-    loading,
+    loading: false, // No loading since we removed automatic auth checks
     error,
     clearAuthError,
   };
