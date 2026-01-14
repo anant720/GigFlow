@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Test</title>
+</head>
+<body>
+    <h1>Authentication Test</h1>
+
+    <div id="status">Loading...</div>
+
+    <button id="registerBtn">Register Test User</button>
+    <button id="loginBtn">Login Test User</button>
+    <button id="dashboardBtn">Test Dashboard</button>
+    <button id="gigBtn">Create Gig</button>
+
+    <div id="result"></div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const resultDiv = document.getElementById('result');
+
+        // Check current auth status
+        fetch('http://localhost:8000/api/auth/me', {
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                statusDiv.textContent = 'Authenticated as: ' + data.data.name;
+            } else {
+                statusDiv.textContent = 'Not authenticated';
+            }
+        })
+        .catch(error => {
+            statusDiv.textContent = 'Error checking auth: ' + error.message;
+        });
+
+        // Register button
+        document.getElementById('registerBtn').addEventListener('click', async () => {
+            resultDiv.textContent = 'Registering...';
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: 'Test User ' + Date.now(),
+                        email: 'test' + Date.now() + '@example.com',
+                        password: 'password123'
+                    })
+                });
+                const data = await response.json();
+                resultDiv.textContent = 'Register result: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Register error: ' + error.message;
+            }
+        });
+
+        // Login button
+        document.getElementById('loginBtn').addEventListener('click', async () => {
+            resultDiv.textContent = 'Logging in...';
+            try {
+                const response = await fetch('http://localhost:8000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                const data = await response.json();
+                resultDiv.textContent = 'Login result: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Login error: ' + error.message;
+            }
+        });
+
+        // Dashboard button
+        document.getElementById('dashboardBtn').addEventListener('click', async () => {
+            resultDiv.textContent = 'Loading dashboard...';
+            try {
+                const response = await fetch('http://localhost:8000/api/gigs/user/me', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                resultDiv.textContent = 'Dashboard result: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Dashboard error: ' + error.message;
+            }
+        });
+
+        // Create gig button
+        document.getElementById('gigBtn').addEventListener('click', async () => {
+            resultDiv.textContent = 'Creating gig...';
+            try {
+                const response = await fetch('http://localhost:8000/api/gigs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        title: 'Test Gig ' + Date.now(),
+                        description: 'This is a test gig created from the test page',
+                        budget: 100
+                    })
+                });
+                const data = await response.json();
+                resultDiv.textContent = 'Gig creation result: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Gig creation error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

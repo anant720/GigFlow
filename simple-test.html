@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Connection Test</title>
+</head>
+<body>
+    <h1>Connection Test</h1>
+    <button onclick="testHealth()">Test Backend Health</button>
+    <button onclick="testRegister()">Test Register</button>
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        async function testHealth() {
+            try {
+                results.innerHTML = 'Testing health...';
+                const response = await fetch('http://localhost:8000/health');
+                const data = await response.json();
+                results.innerHTML = 'Health OK: ' + JSON.stringify(data);
+            } catch (error) {
+                results.innerHTML = 'Health Error: ' + error.message;
+            }
+        }
+
+        async function testRegister() {
+            try {
+                results.innerHTML = 'Testing register...';
+                const response = await fetch('http://localhost:8000/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Simple Test User',
+                        email: 'simple' + Date.now() + '@test.com',
+                        password: 'password123'
+                    })
+                });
+                const data = await response.json();
+                results.innerHTML = 'Register Result: ' + JSON.stringify(data);
+            } catch (error) {
+                results.innerHTML = 'Register Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
