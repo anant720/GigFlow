@@ -27,9 +27,13 @@ const io = new Server(server, {
   }
 });
 
-// Middleware - temporarily disable CORS for testing
+// CORS Configuration
 app.use(cors({
-  origin: true, // Allow all origins for testing
+  origin: [
+    'http://localhost:5174', // Development
+    'https://gig-flow-wine-alpha.vercel.app', // Production Vercel URL
+    'https://gigflow.vercel.app' // Alternative production URL
+  ],
   credentials: true
 }));
 
