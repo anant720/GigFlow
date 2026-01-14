@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 // Configure axios defaults - use absolute URL for production
+// In Vercel, set VITE_API_URL=https://gigflow-h1mm.onrender.com in environment variables
 const API_URL = import.meta.env.VITE_API_URL || 'https://gigflow-h1mm.onrender.com';
 axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
