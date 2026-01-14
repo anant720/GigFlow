@@ -11,7 +11,12 @@ GigFlow is a **fully functional, production-ready full stack freelance marketpla
 * **GitHub Repository:** [https://github.com/anant720/GigFlow](https://github.com/anant720/GigFlow)
 
 ---
+## 🎥 Project Demo Video
 
+The complete project demonstration video is available here:  
+https://drive.google.com/drive/folders/1UJh5DMPdfR7CetYGBtglwjWdbI-haJpI?usp=drive_link
+
+---
 ## ✅ Project Status
 
 All major functionalities of the project are **working correctly in production** and can be tested using the live links above.
