@@ -19,11 +19,19 @@ const DashboardPage = () => {
           bidsAPI.getUserBids()
         ]);
 
-        setUserGigs(gigsResponse.data.data);
-        setUserBids(bidsResponse.data.data);
+        setUserGigs(gigsResponse.data?.data || []);
+        setUserBids(bidsResponse.data?.data || []);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        toast.error('Failed to load dashboard data');
+        
+        // Don't show error toast for 401 - interceptor will handle redirect
+        if (error.response?.status !== 401) {
+          toast.error('Failed to load dashboard data');
+        }
+        
+        // Set empty arrays on error to prevent undefined errors
+        setUserGigs([]);
+        setUserBids([]);
       } finally {
         setLoading(false);
       }

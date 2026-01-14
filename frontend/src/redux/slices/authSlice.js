@@ -104,6 +104,10 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        // Store token for API requests (backup for cookie issues)
+        if (action.payload.token) {
+          localStorage.setItem('token', action.payload.token);
+        }
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -123,6 +127,10 @@ const authSlice = createSlice({
         state.token = action.payload.token;
         state.isAuthenticated = true;
         state.error = null;
+        // Store token for API requests (backup for cookie issues)
+        if (action.payload.token) {
+          localStorage.setItem('token', action.payload.token);
+        }
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -159,6 +167,9 @@ const authSlice = createSlice({
         state.token = null;
         state.isAuthenticated = false;
         state.error = null;
+        // Clear token from storage
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
@@ -166,6 +177,9 @@ const authSlice = createSlice({
         // Still logout on client side even if API call fails
         state.user = null;
         state.isAuthenticated = false;
+        // Clear token from storage
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
       });
   },
 });

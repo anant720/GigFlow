@@ -11,6 +11,14 @@ axios.interceptors.request.use(
   (config) => {
     // Ensure credentials are always sent with requests
     config.withCredentials = true;
+    
+    // Get token from Redux store if available (for cross-origin cookie issues)
+    // Try to get from localStorage or sessionStorage as fallback
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    
     return config;
   },
   (error) => {
@@ -59,8 +67,15 @@ axios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Handle unauthorized access
-      window.location.href = '/login';
+      // Only redirect if not already on login/register page
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/login') && !currentPath.includes('/register')) {
+        // Clear authentication state
+        localStorage.removeItem('token');
+        sessionStorage.removeItem('token');
+        // Redirect to login
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
