@@ -115,11 +115,27 @@ global.notifyUser = notifyUser;
 // Database connection
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    // Check if MONGODB_URI is set
+    if (!process.env.MONGODB_URI) {
+      console.error('❌ ERROR: MONGODB_URI environment variable is not set!');
+      console.error('Please set MONGODB_URI in your Render environment variables.');
+      console.error('Expected format: mongodb+srv://username:password@cluster.mongodb.net/database');
+      process.exit(1);
+    }
 
-    console.log(`MongoDB Connected: ${conn.connection.host}`);
+    console.log('🔌 Attempting to connect to MongoDB...');
+    console.log('MongoDB URI:', process.env.MONGODB_URI.replace(/:[^:@]+@/, ':****@')); // Hide password
+    
+    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
+    });
+
+    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
-    console.error('Database connection error:', error);
+    console.error('❌ Database connection error:', error.message);
+    if (error.message.includes('undefined')) {
+      console.error('💡 TIP: Make sure MONGODB_URI is set in Render environment variables');
+    }
     process.exit(1);
   }
 };
