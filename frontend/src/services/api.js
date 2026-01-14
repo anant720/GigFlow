@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-// Configure axios defaults - use relative URLs for proxy
-axios.defaults.baseURL = '';
+// Configure axios defaults - use absolute URL for production
+const API_URL = import.meta.env.VITE_API_URL || 'https://gigflow-h1mm.onrender.com';
+axios.defaults.baseURL = API_URL;
 axios.defaults.withCredentials = true;
 
 // Add request interceptor for authentication
