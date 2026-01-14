@@ -247,15 +247,27 @@ const getUserBids = async (req, res) => {
   try {
     const bids = await Bid.find({ freelancerId: req.user._id })
       .populate({
-        path: 'gig',
-        populate: { path: 'owner', select: 'name email' }
+        path: 'gigId',
+        select: 'title description budget status ownerId',
+        populate: { path: 'ownerId', select: 'name email' }
       })
       .sort({ createdAt: -1 });
 
+    // Map gigId to gig for frontend compatibility (keep both)
+    const formattedBids = bids.map(bid => {
+      const bidObj = bid.toObject();
+      if (bidObj.gigId && typeof bidObj.gigId === 'object') {
+        bidObj.gig = bidObj.gigId;
+        // Keep gigId as string for links
+        bidObj.gigId = bidObj.gigId._id || bidObj.gigId;
+      }
+      return bidObj;
+    });
+
     res.status(200).json({
       success: true,
-      count: bids.length,
-      data: bids
+      count: formattedBids.length,
+      data: formattedBids
     });
   } catch (error) {
     console.error('Get user bids error:', error);

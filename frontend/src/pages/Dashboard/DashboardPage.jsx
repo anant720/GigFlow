@@ -14,22 +14,37 @@ const DashboardPage = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        const [gigsResponse, bidsResponse] = await Promise.all([
+        // Use Promise.allSettled to handle errors independently
+        const [gigsResult, bidsResult] = await Promise.allSettled([
           gigsAPI.getUserGigs(),
           bidsAPI.getUserBids()
         ]);
 
-        setUserGigs(gigsResponse.data?.data || []);
-        setUserBids(bidsResponse.data?.data || []);
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-        
-        // Don't show error toast for 401 - interceptor will handle redirect
-        if (error.response?.status !== 401) {
-          toast.error('Failed to load dashboard data');
+        // Handle gigs response
+        if (gigsResult.status === 'fulfilled') {
+          const gigsData = gigsResult.value.data?.data || gigsResult.value.data || [];
+          setUserGigs(Array.isArray(gigsData) ? gigsData : []);
+        } else {
+          console.error('Error fetching gigs:', gigsResult.reason);
+          if (gigsResult.reason.response?.status !== 401) {
+            toast.error('Failed to load your gigs');
+          }
+          setUserGigs([]);
         }
-        
-        // Set empty arrays on error to prevent undefined errors
+
+        // Handle bids response
+        if (bidsResult.status === 'fulfilled') {
+          const bidsData = bidsResult.value.data?.data || bidsResult.value.data || [];
+          setUserBids(Array.isArray(bidsData) ? bidsData : []);
+        } else {
+          console.error('Error fetching bids:', bidsResult.reason);
+          if (bidsResult.reason.response?.status !== 401) {
+            toast.error('Failed to load your applications');
+          }
+          setUserBids([]);
+        }
+      } catch (error) {
+        console.error('Unexpected error fetching dashboard data:', error);
         setUserGigs([]);
         setUserBids([]);
       } finally {
